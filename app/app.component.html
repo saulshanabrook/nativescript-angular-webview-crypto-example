@@ -1,6 +1,7 @@
 <StackLayout class="p-20">
     <polyfill-crypto></polyfill-crypto>
     <Label text="Tap the button" class="h1 text-center"></Label>
-    <Button text="TAP" (tap)="onTap()" class="btn btn-primary btn-active"></Button>
-    <Label [text]="message" class="text-center" textWrap="true"></Label>
+    <Button text="Symmetric" (tap)="onTap()" class="btn btn-primary btn-active"></Button>
+    <Button text="Derive Keys" (tap)="onTapDerive()" class="btn btn-primary btn-active"></Button>
+    <Label [text]="message" textWrap="true"></Label>
 </StackLayout>

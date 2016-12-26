@@ -1,5 +1,31 @@
 import { Component, ChangeDetectorRef } from "@angular/core";
 
+function arrayBufferToHexString(arrayBuffer) {
+  const byteArray = new Uint8Array(arrayBuffer);
+  let hexString = "";
+  let nextHexByte;
+
+  for (let i=0; i<byteArray.byteLength; i++) {
+      nextHexByte = byteArray[i].toString(16);
+      if (nextHexByte.length < 2) {
+          nextHexByte = "0" + nextHexByte;
+      }
+      hexString += nextHexByte;
+  }
+  return hexString;
+}
+
+function stringToArrayBuffer(str) {
+  // http://stackoverflow.com/a/11058858/907060
+  const buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
+  const bufView = new Uint16Array(buf);
+  for (let i=0, strLen=str.length; i<strLen; i++) {
+    bufView[i] = str.charCodeAt(i);
+  }
+  return buf;
+}
+
+
 @Component({
     selector: "my-app",
     templateUrl: "app.component.html",
@@ -13,6 +39,47 @@ export class AppComponent {
       this.message += `${status}\n`;
       this.cdr.detectChanges();
     }
+
+
+  onTapDerive() {
+    this.message = "";
+    // from https://blog.engelke.com/2015/02/14/deriving-keys-from-passwords-with-webcrypto/
+    const saltString = "Pick anything you want. This isn't secret.";
+    const iterations = 1000;
+    const hash = "SHA-256";
+    const password = "My Secret!"
+
+    this.addStatus("Running: importKey");
+    crypto.subtle.importKey(
+      "raw",
+      stringToArrayBuffer(password),
+      {"name": "PBKDF2"},
+      false,
+      ["deriveKey"]
+    ).then(baseKey => {
+      this.addStatus("Running: deriveKey");
+      return window.crypto.subtle.deriveKey(
+        {
+          "name": "PBKDF2",
+          "salt": stringToArrayBuffer(saltString),
+          "iterations": iterations,
+          "hash": hash
+        },
+        baseKey,
+        {"name": "AES-CBC", "length": 128}, // Key we want
+        true,                               // Extrable
+        ["encrypt", "decrypt"]              // For new key
+      );
+    }).
+    then(aesKey =>  {
+      this.addStatus("Running: exportKey");
+      return window.crypto.subtle.exportKey("raw", aesKey);
+    }).
+    then(keyBytes => {
+      var hexKey = arrayBufferToHexString(keyBytes);
+      this.addStatus(`Got key: ${hexKey}`)
+    })
+  }
 
   onTap() {
     this.message = "";
