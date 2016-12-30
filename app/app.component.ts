@@ -54,11 +54,11 @@ export class AppComponent {
       "raw",
       stringToArrayBuffer(password),
       {"name": "PBKDF2"},
-      false,
+      true,
       ["deriveKey"]
     ).then(baseKey => {
       this.addStatus("Running: deriveKey");
-      return window.crypto.subtle.deriveKey(
+      return crypto.subtle.deriveKey(
         {
           "name": "PBKDF2",
           "salt": stringToArrayBuffer(saltString),
@@ -73,7 +73,7 @@ export class AppComponent {
     }).
     then(aesKey =>  {
       this.addStatus("Running: exportKey");
-      return window.crypto.subtle.exportKey("raw", aesKey);
+      return crypto.subtle.exportKey("raw", aesKey);
     }).
     then(keyBytes => {
       var hexKey = arrayBufferToHexString(keyBytes);
