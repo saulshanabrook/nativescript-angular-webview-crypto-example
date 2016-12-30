@@ -21,7 +21,7 @@
     "@angular/platform-browser": "2.2.4",
     "@angular/platform-browser-dynamic": "2.2.4",
     "nativescript-angular": "1.2.0",
-    "nativescript-angular-webview-crypto": "0.0.4",
+    "nativescript-angular-webview-crypto": "0.0.5",
     "nativescript-theme-core": "1.0.2",
     "reflect-metadata": "0.1.9",
     "rxjs": "5.0.0-beta.12",
